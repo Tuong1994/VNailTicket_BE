@@ -2,6 +2,7 @@ import {
   Controller,
   HttpCode,
   HttpStatus,
+  Get,
   Post,
   Delete,
   Query,
@@ -11,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { UploadService } from './upload.service';
 import { JwtGuard } from 'src/common/guard/jwt.guard';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { multerOption } from 'src/common/config/multer.config';
 import { QueryDto } from 'src/common/dto/query.dto';
 
@@ -19,16 +20,22 @@ import { QueryDto } from 'src/common/dto/query.dto';
 export class UploadController {
   constructor(private uploadService: UploadService) {}
 
-  @Post('upload')
-  @UseGuards(JwtGuard)
-  @UseInterceptors(FileInterceptor('images', multerOption('./assets/image/product')))
+  @Get('list')
   @HttpCode(HttpStatus.OK)
+  getImages() {
+    return this.uploadService.getImages();
+  }
+
+  @Post('upload')
+  // @UseGuards(JwtGuard)
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(FilesInterceptor('images', 5, multerOption('./assets/images')))
   imagesUpload(@UploadedFiles() files: Express.Multer.File[]) {
     return this.uploadService.imagesUpload(files);
   }
 
   @Delete('remove')
-  @UseGuards(JwtGuard)
+  // @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.OK)
   removeImage(@Query() query: QueryDto) {
     return this.uploadService.removeImage(query);

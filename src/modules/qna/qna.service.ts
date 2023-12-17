@@ -8,7 +8,7 @@ export class QnAService {
   constructor(private prisma: PrismaService) {}
 
   async getQnAItems() {
-    const qnaItems = await this.prisma.qnAItem.findMany();
+    const qnaItems = await this.prisma.qnAItem.findMany({ orderBy: [{ updatedAt: 'desc' }] });
     return qnaItems;
   }
 

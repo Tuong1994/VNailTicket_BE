@@ -11,8 +11,13 @@ export class UploadService {
     private cloudinary: CloudinaryService,
   ) {}
 
+  async getImages() {
+    const images = await this.prisma.image.findMany({ orderBy: [{ updatedAt: 'desc' }] });
+    return images;
+  }
+
   async imagesUpload(files: Express.Multer.File[]) {
-    if (!files.length) throw new HttpException('Files are not provided', HttpStatus.NOT_FOUND);
+    if (!files || !files.length) throw new HttpException('Files are not provided', HttpStatus.NOT_FOUND);
 
     const images = await Promise.all(
       files.map(async (file) => {

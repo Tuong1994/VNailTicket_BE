@@ -14,7 +14,7 @@ export class CheckIdMiddleware implements NestMiddleware {
   async use(req: Request, res: Response, next: NextFunction) {
     const { accountId, qnaItemId, imageId } = req.query;
 
-    if (!accountId && !qnaItemId && imageId) {
+    if (!accountId && !qnaItemId && !imageId) {
       throw new HttpException('Id is not provided', HttpStatus.BAD_REQUEST);
     }
 
