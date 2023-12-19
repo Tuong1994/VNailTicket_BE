@@ -11,9 +11,12 @@ export class UploadService {
     private cloudinary: CloudinaryService,
   ) {}
 
-  async getImages() {
+  async getImages(query: QueryDto) {
+    const { limit } = query;
     const images = await this.prisma.image.findMany({ orderBy: [{ updatedAt: 'desc' }] });
-    return images;
+    const totalItems = images.length;
+    const collection = images.slice(0, limit);
+    return { totalItems, data: collection };
   }
 
   async imagesUpload(files: Express.Multer.File[]) {
@@ -33,11 +36,15 @@ export class UploadService {
     throw new HttpException('Uploaded success', HttpStatus.OK);
   }
 
-  async removeImage(query: QueryDto) {
-    const { imageId } = query;
-    const image = await this.prisma.image.findUnique({ where: { id: imageId } });
-    await this.cloudinary.destroy(image.publicId);
-    await this.prisma.image.delete({ where: { id: imageId } });
-    throw new HttpException('Removed success', HttpStatus.OK);
+  async removeImages(query: QueryDto) {
+    const { ids } = query;
+    const listIds = ids.split(',');
+    const images = await this.prisma.image.findMany({ where: { id: { in: listIds } } });
+    if (images && images.length > 0) {
+      await Promise.all(images.map(async (file) => await this.cloudinary.destroy(file.publicId)));
+      await this.prisma.image.deleteMany({ where: { id: { in: listIds } } });
+      throw new HttpException('Removed success', HttpStatus.OK);
+    }
+    throw new HttpException('Image not found', HttpStatus.NOT_FOUND);
   }
 }

@@ -22,12 +22,12 @@ export class UploadController {
 
   @Get('list')
   @HttpCode(HttpStatus.OK)
-  getImages() {
-    return this.uploadService.getImages();
+  getImages(@Query() query: QueryDto) {
+    return this.uploadService.getImages(query);
   }
 
   @Post('upload')
-  // @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(FilesInterceptor('images', 5, multerOption('./assets/images')))
   imagesUpload(@UploadedFiles() files: Express.Multer.File[]) {
@@ -35,9 +35,9 @@ export class UploadController {
   }
 
   @Delete('remove')
-  // @UseGuards(JwtGuard)
+  @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.OK)
-  removeImage(@Query() query: QueryDto) {
-    return this.uploadService.removeImage(query);
+  removeImages(@Query() query: QueryDto) {
+    return this.uploadService.removeImages(query);
   }
 }
