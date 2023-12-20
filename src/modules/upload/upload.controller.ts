@@ -29,7 +29,7 @@ export class UploadController {
   @Post('upload')
   @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(FilesInterceptor('images', 5, multerOption('./assets/images')))
+  @UseInterceptors(FilesInterceptor('images', 5, multerOption()))
   imagesUpload(@UploadedFiles() files: Express.Multer.File[]) {
     return this.uploadService.imagesUpload(files);
   }

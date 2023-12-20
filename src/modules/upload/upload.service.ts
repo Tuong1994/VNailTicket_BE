@@ -24,12 +24,12 @@ export class UploadService {
 
     const images = await Promise.all(
       files.map(async (file) => {
-        const result = await this.cloudinary.upload(file.path);
+        const b64 = Buffer.from(file.buffer).toString("base64");
+        let dataURI = "data:" + file.mimetype + ";base64," + b64;
+        const result = await this.cloudinary.upload(dataURI);
         return utils.generateImage(result);
       }),
     );
-
-    files.forEach((file) => utils.removeFile(file.path));
 
     await this.prisma.image.createMany({ data: images });
 
