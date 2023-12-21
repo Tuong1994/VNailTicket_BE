@@ -9,7 +9,7 @@ import cors = require('cors');
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const corsOptions: CorsOptions = {
-    origin: ['http://localhost:5173', 'https://v-nail-ticket-fe-tuong1994.vercel.app'],
+    origin: ['http://localhost:5173', 'https://v-nail-ticket-fe-tuong1994.vercel.app', 'https://v-nail-ticket-fe.vercel.app/'],
     credentials: true,
     exposedHeaders: ['set-cookie'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
